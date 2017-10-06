@@ -15,6 +15,20 @@ Quick start
     http://socialhome.readthedocs.io/en/latest/development.html#development
     http://socialhome.readthedocs.io/en/latest/install_guides.html#install-guides
 
+    -Install postgis
+    sudo apt-get install postgis
+
+    -On db creation, use next flow (or create extension postgis later) :
+
+    sudo su - postgres
+    createuser -s -P socialhome  # give password 'socialhome'
+    createdb -O socialhome socialhome
+    psql
+    \c socialhome;
+    create extension postgis;
+    \q    
+    exit
+
     And copy ctracker to project folder
 
 1. Update frontend part
@@ -31,10 +45,12 @@ Quick start
 
 2.1 Update settings in config/settings/common.py:
 
-    -Add "ctracker" to your INSTALLED_APPS
+    -Add "ctracker"  and 'django.contrib.gis' to your INSTALLED_APPS
     INSTALLED_APPS = [
         ...
+        'django.contrib.gis'
         'ctracker',
+        
     ]
 
     -Add
@@ -44,6 +60,10 @@ Quick start
     -Add
     str(ROOT_DIR.path("ctracker").path("static"))  to
     STATICFILES_DIRS
+
+    -Add
+    DATABASES["default"]['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+    after DATABASES definition
 
 2.2 Update URLconf in socialhome config/urls.py:
 
@@ -58,3 +78,4 @@ Quick start
     
 
 3. Run `python manage.py migrate` to create the ctracker models.
+# python manage.py initiate_db
