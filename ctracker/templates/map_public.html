@@ -1,0 +1,88 @@
+{% extends "map_base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Corruption Map" %}    
+{% endblock %}
+
+{% block containertype %}container-fluid{% endblock %}
+
+{% block ogtags %}
+    <meta property="og:title" content="{% trans "Public" %} - {{ request.site.name }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://{{ request.site.domain }}{{ request.path }}" />
+    {# TODO fix logo #}
+    <meta property="og:image" content="https://socialhome.network/media/markdownx/74b37fa1-88d0-4e29-9fdc-8d07ba216f63.png" />
+{% endblock %}
+
+{% block content %}
+
+        <!-- Map  -->
+    <!-- <div id="map" style="width:70%; height: 300px; position: relative;"></div> -->
+
+    <div id="map" style="width:70%; height: 300px; float: left;">
+      <v-map :zoom=13 :center="[47.413220, -1.219482]">
+        <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
+      </v-map>
+    </div>
+
+     <script type="text/javascript">
+    // (function () {
+
+    //     function loadmap() {
+    //         var djoptions = {
+    //             "resetview": false, 
+    //             "attributionprefix": null, 
+    //             "scale": "metric", 
+    //             "minzoom": null, 
+    //             "zoom": null, 
+    //             "fitextent": true, 
+    //             "tilesextent": [], 
+    //             "layers": [
+    //                 ["Hydda", "http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png", 
+    //                     {"attribution": "Tiles courtesy of <a href=\"http://openstreetmap.se/\" target=\"_blank\">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>"}]],
+    //             "minimap": false, 
+    //             "overlays": [], 
+    //             "maxzoom": null, 
+    //             "srid": null, 
+    //             "extent": [[-90, -180], [90, 180]], 
+    //             "center": null},
+
+    //         options = {djoptions: djoptions, initfunc: loadmap,
+    //                        globals: false, callback: main_map_init};
+    //         L.Map.djangoMap('map', options);
+    //     }
+
+    //     var loadevents = ["load"];
+    //     if (loadevents.length === 0) loadmap();
+    //     else if (window.addEventListener) for (var i=0; i<loadevents.length; i++) window.addEventListener(loadevents[i], loadmap, false);
+    //     else if (window.jQuery) jQuery(window).on(loadevents.join(' '), loadmap);
+        
+    // })();        
+    </script>
+
+
+
+    <script>var socialhomeStream = "{{ stream_name }}";</script>
+    <div class="streams-container" style="width:30%; float: right;">
+        <div class="container">
+            <div id="new-content-container" class="hidden">
+                <a href="" id="new-content-load-link" onclick="return false;">
+                    <span class="badge badge-pill badge-primary"><span id="new-content-count">0</span> {% trans "new posts available" %}</span>
+                </a>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="stamped">
+                <h2>{% trans "Public" %}</h2>
+                <p>{% trans "Contains public content from around the network." %}</p>
+            </div>
+            <div class="grid-sizer"></div>
+
+            <div class="gutter-sizer"></div>
+            {% for content in content_list %}
+                {% include "streams/_grid_item.html" %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

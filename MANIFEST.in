@@ -1,4 +1,2 @@
 include LICENSE
 include README.md
-recursive-include ctracker/static *
-recursive-include ctracker/templates *
