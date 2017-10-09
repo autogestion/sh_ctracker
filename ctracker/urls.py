@@ -2,7 +2,7 @@
 from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 
-# from api import views, claim, geoinfo
+from ctracker import views
 
 
 class CustomRouter(DefaultRouter):
@@ -27,8 +27,8 @@ router = CustomRouter()
 #                 base_name='polygon')
 # router.register(r'polygon/get_nearest', geoinfo.GetNearestPolygons,
 #                 base_name='get_nearest')
-# router.register(r'polygon/fit_bounds', geoinfo.FitBoundsPolygons,
-#                 base_name='fit_bounds')
+router.register(r'polygon/fit_bounds', views.FitBoundsPolygons,
+                base_name='fit_bounds')
 # router.register(r'polygon/check_in', geoinfo.CheckInPolygon,
 #                 base_name='check_in')
 # router.register(r'polygon/get_tree', geoinfo.GetPolygonsTree,

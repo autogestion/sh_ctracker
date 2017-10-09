@@ -9,7 +9,6 @@ FB - https://www.facebook.com/activecorruptiontracking/
 
 
 ## Quick start
------------
 
 1. Install prerequisites
 
