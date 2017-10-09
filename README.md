@@ -8,74 +8,82 @@ Corruption tracker lets you make cases of corruption and professionally unfit of
 FB - https://www.facebook.com/activecorruptiontracking/
 
 
-Quick start
+## Quick start
 -----------
 
-0. Install Socialhome using sh guides
-    http://socialhome.readthedocs.io/en/latest/development.html#development
-    http://socialhome.readthedocs.io/en/latest/install_guides.html#install-guides
+1. Install prerequisites
 
-    -Install postgis
-    sudo apt-get install postgis
+    1.1 Intstall Socialhome using sh guides:
 
-    -On db creation, use next flow (or create extension postgis later) :
+        http://socialhome.readthedocs.io/en/latest/development.html#development
+        http://socialhome.readthedocs.io/en/latest/install_guides.html#install-guides
 
-    sudo su - postgres
-    createuser -s -P socialhome  # give password 'socialhome'
-    createdb -O socialhome socialhome
-    psql
-    \c socialhome;
-    create extension postgis;
-    \q    
-    exit
+     1.2 Install postgis
 
-    And copy ctracker to project folder
+        sudo apt-get install postgis
 
-1. Update frontend part
+     1.3 On db creation, use next flow (or create extension postgis later):
 
-1.1 Install Vue2Leaflet
-    npm install vue2-leaflet --save
+        sudo su - postgres
+        createuser -s -P socialhome  # give password 'socialhome'
+        createdb -O socialhome socialhome
+        psql
+        \c socialhome;
+        create extension postgis;
+        \q    
+        exit
 
-1.1 Update webpack config
+     Clone ctracker and symlink it to socialhome project folder
 
-    -Add to module.exports
-    map: path.resolve(__dirname, "ctracker/front_vue/map.js"),
+2. Update frontend part
 
-2. Update Django part
+    2.1 Install Vue2Leaflet
 
-2.1 Update settings in config/settings/common.py:
+        npm install vue2-leaflet --save
 
-    -Add "ctracker"  and 'django.contrib.gis' to your INSTALLED_APPS
-    INSTALLED_APPS = [
-        ...
-        'django.contrib.gis'
-        'ctracker',
+    2.1 Update webpack config
+
+        -Add to module.exports
+
+        map: path.resolve(__dirname, "ctracker/front_vue/map.js"),
+
+3. Update Django part
+
+    3.1 Update settings in config/settings/common.py:
+
+        -Add "ctracker"  and 'django.contrib.gis' to your INSTALLED_APPS
+        INSTALLED_APPS = [
+            ...
+            'django.contrib.gis',
+            'ctracker',
+            
+        ]
+
+        -Add
+        str(ROOT_DIR.path("ctracker").path("templates"))  to
+        TEMPLATES["DIRS"]
+
+        -Add
+        str(ROOT_DIR.path("ctracker").path("static"))  to
+        STATICFILES_DIRS
+
+        -Add
+        DATABASES["default"]['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+        after DATABASES definition
+
+    3.2 Update URLconf in socialhome config/urls.py:
+
+        -Add 
+        from ctracker.views import MapHomeView
+
+        -Replace url(r"^$", HomeView.as_view(), name="home"), with
+        url(r"^$", MapHomeView.as_view(), name="home"),
+
+        -Add
+        url(r'^ctracker/', include('ctracker.urls')),
         
-    ]
 
-    -Add
-    str(ROOT_DIR.path("ctracker").path("templates"))  to
-    TEMPLATES["DIRS"]
-
-    -Add
-    str(ROOT_DIR.path("ctracker").path("static"))  to
-    STATICFILES_DIRS
-
-    -Add
-    DATABASES["default"]['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
-    after DATABASES definition
-
-2.2 Update URLconf in socialhome config/urls.py:
-
-    -Add 
-    from ctracker.views import MapHomeView
-
-    -Replace url(r"^$", HomeView.as_view(), name="home"), with
-    url(r"^$", MapHomeView.as_view(), name="home"),
-
-    -Add
-    url(r'^ctracker/', include('ctracker.urls')),
+    3.3. Run
     
-
-3. Run `python manage.py migrate` to create the ctracker models.
-# python manage.py initiate_db
+        python manage.py migrate
+        python manage.py initiate_db

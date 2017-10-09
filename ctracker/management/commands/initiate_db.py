@@ -12,11 +12,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        call_command('loaddata', 'initial_data')
+        # call_command('loaddata', 'initial_data')
+        geo_path = str(settings.ROOT_DIR.path("ctracker").path("init_geo_data"))
 
-        geofilenames = os.listdir(settings.INIT_GEOJSON_FOLDER)
-        fullpathes = [os.path.join(
-                      settings.INIT_GEOJSON_FOLDER,
+        geofilenames = os.listdir(geo_path)
+        fullpathes = [os.path.join(geo_path,
                       x) for x in geofilenames if x.endswith('.geojson')]
         geojsons = list(map(GeoJSONParser.get_geojson_file, fullpathes))
         geojsons.sort(key=lambda x: x['ctracker_config']['AL'])

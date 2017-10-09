@@ -35,12 +35,8 @@ class GeoJSONParser():
             try:
                 xabar = ClaimType.objects.get(name='Xabar')
             except ClaimType.DoesNotExist:
-                with open(os.path.join(settings.INIT_GEOJSON_FOLDER,
-                          'habar.jpg'), 'rb') as x_logo:
-                    xabar_file = File(x_logo)
-
-                    xabar = ClaimType(name='Xabar', icon=xabar_file)
-                    xabar.save()
+                xabar = ClaimType(name='Xabar')
+                xabar.save()
 
         # Create polygons
         for feature in geo_json['features']:
@@ -59,7 +55,6 @@ class GeoJSONParser():
                         srid=4326),
                     address=feature['properties']['ADDRESS'],
                     level=geo_json['ctracker_config']['AL'],
-                    zoom=geo_json['ctracker_config']['ZOOM']
                     )
 
                 if feature['properties']['PARENT']:

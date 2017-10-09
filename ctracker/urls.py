@@ -19,8 +19,6 @@ class CustomRouter(DefaultRouter):
 
 router = CustomRouter()
 
-# router.register(r'sign_up', views.SignUp,
-#                 base_name='sign_up')
 # router.register(r'claim', claim.ClaimViewSet,
 #                 base_name='claims')
 # router.register(r'organization', claim.OrganizationViewSet,
