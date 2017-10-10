@@ -3,8 +3,93 @@ from django.db import models
 from django.forms.models import model_to_dict
 from rest_framework import serializers
 
-from ctracker.sql import get_sum_for_layers, get_max_for_layers
-from ctracker.models import Polygon, Organization, OrganizationType
+from ctracker.sql import get_sum_for_layers
+from ctracker.sql import get_max_for_layers
+from ctracker.models import Polygon
+from ctracker.models import Organization
+from ctracker.models import OrganizationType
+from ctracker.models import AddressException
+from ctracker.models import ClaimType
+from ctracker.models import Claim
+
+
+class ClaimTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ClaimType
+        fields = '__all__'
+
+
+class ClaimListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        iterable = data.all() if isinstance(data, models.Manager) else data
+        return [
+            self.child.to_representation(item) for item in iterable if item
+        ]
+
+
+class ClaimSerializer(serializers.ModelSerializer):
+
+    organization_name = serializers.ReadOnlyField(source='organization.name')
+    claim_type_name = serializers.ReadOnlyField(source='claim_type.name')
+    created = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",
+                                        read_only=True)
+
+    complainer_name = serializers.SerializerMethodField()
+    broadcaster = serializers.ReadOnlyField(source='author.id')
+    broadcaster_name = serializers.ReadOnlyField(source='author.handle')
+    claim_icon = serializers.SerializerMethodField()
+
+    def get_complainer_name(self, instance):
+        if instance.complainer:
+            if instance.complainer.get_full_name():
+                return instance.complainer.get_full_name()
+            else:
+                return instance.complainer.username
+
+    def get_claim_icon(self, instance):
+        if instance.claim_type and instance.claim_type.icon:
+            return instance.claim_type.icon.url
+
+    class Meta:
+        model = Claim
+        fields = ('servant', 'claim_type_name', 'bribe',
+                  'text', 'created', 'claim_icon',
+                  # write only
+                  'organization', 'claim_type',
+                  # changing
+                  'organization_name', 
+                  'broadcaster', 'broadcaster_name',
+                  'complainer', 'complainer_name',)
+
+        extra_kwargs = {'claim_type': {'required': True, 'write_only': True},
+                        'organization': {'write_only': True},
+                        'complainer': {'read_only': True},
+                        'claim_icon': {'read_only': True}, 
+                        }
+
+    def to_representation(self, instance):
+        claim = super(ClaimSerializer, self).to_representation(instance)
+
+        if self.org_or_user == 'org':
+            claim['complainer_count'] = instance.num_c
+
+        return claim
+
+    @classmethod
+    def many_init(cls, *args, **kwargs):
+        kwargs['child'] = cls(**kwargs)
+        kwargs.pop('org_or_user', None)
+        return ClaimListSerializer(*args, **kwargs)
+
+    def __init__(self, *args, **kwargs):
+        self.org_or_user = kwargs.pop('org_or_user', False)
+        super(ClaimSerializer, self).__init__(*args, **kwargs)
+
+        if self.org_or_user == 'org':
+            self.fields.pop('organization_name', None)
+        elif self.org_or_user == 'user':
+            pass
 
 
 class OrganizationTypeSerializer(serializers.ModelSerializer):
@@ -20,10 +105,6 @@ class SkipEmptyListSerializer(serializers.ListSerializer):
         return [
             self.child.to_representation(item) for item in iterable if item
         ]
-
-
-class AddressException(Exception):
-    pass
 
 
 class OrganizationSerializer(serializers.ModelSerializer):

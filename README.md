@@ -88,4 +88,4 @@ FB - https://www.facebook.com/activecorruptiontracking/
         python manage.py initiate_db
 
 
-API docs available on /api/#/ctracker
+API docs available on .../api/#/ctracker

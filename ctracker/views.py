@@ -2,14 +2,26 @@
 from django.views.generic import TemplateView
 from django.contrib.gis import geos
 from django.db.models import Q
-from rest_framework import viewsets, mixins, filters, status
+from django.db.models import Count
+from rest_framework import viewsets
+from rest_framework import mixins
+from rest_framework import filters
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
+from rest_framework.decorators import detail_route
 
 from socialhome.streams.views import PublicStreamView
+from socialhome.users.models import Profile
 
-from ctracker import serializers
-from ctracker.models import Polygon, Organization, OrganizationType
+from ctracker.models import Polygon
+from ctracker.models import Organization
+from ctracker.models import OrganizationType
+from ctracker.models import Claim
+from ctracker.serializers import PolygonSerializer
+from ctracker.serializers import OrganizationSerializer
+from ctracker.serializers import OrganizationTypeSerializer
+from ctracker.serializers import ClaimSerializer
 
 
 class MapPublicStreamView(PublicStreamView):
@@ -23,11 +35,117 @@ class MapHomeView(TemplateView):
         return MapPublicStreamView.as_view()(request)
 
 
+class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    """
+
+
+    - to add claim use POST request with next parameters:
+        required - 'text', 'organization', 'servant', 'claim_type'
+        optional - 'live', 'bribe', 'anonymously':'on'
+
+    Example:
+        'text': 'Покусали комарі',
+        'claim_type': '2',
+        'servant': 'Бабця',
+        'live': 'true',
+        'organization': '13',
+        'bribe': '50'
+    .
+    """
+
+    queryset = Claim.objects.all().order_by('-created')
+    serializer_class = ClaimSerializer
+
+    lookup_field = 'id'
+
+    @detail_route()
+    def user(self, request, id=None):
+        """
+        return claims for given user id
+
+        Example:  .../claim/2/user/
+        """         
+        queryset = self.queryset.filter(complainer__id=id)
+        serializer = self.get_serializer(queryset, many=True)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @detail_route()
+    def broadcaster(self, request, id=None):
+        """
+        return claims for given broadcaster id
+
+        Example:  .../claim/3/broadcaster/        
+        """         
+        queryset = self.queryset.filter(author__id=id)
+        serializer = self.get_serializer(queryset, many=True)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+    def retrieve(self, request, id=None):
+        """
+        return claims for given organization id
+
+        Example:  .../claim/13/
+        """         
+        # queryset = self.queryset.filter(organization__id=id)
+        organization = Organization.objects.get(id=id)
+        queryset = organization.moderation_filter(
+            ).select_related().annotate(num_c=Count(
+                'complainer__claim')).order_by('created')
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True, org_or_user='org')
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True, org_or_user='org')
+        return Response(serializer.data)
+
+    def create(self, request):
+        """
+        add claim for given organization id
+
+        required fields - 'text', 'organization', 'servant', 'claim_type'
+
+        optional  fields - 'live', 'bribe', 'anonymously':'on'
+
+        Example:
+
+        { "text": "Покусали комарі",
+        "claim_type": "2",
+        "servant": "Бабця",
+        "organization": "13",
+        "bribe": "50" }
+        """          
+        return super(ClaimViewSet, self).create(request)
+
+    def perform_create(self, serializer):
+        author = Profile.objects.get(user__username='acts')
+        if self.request.user.is_anonymous() or self.request.data.get('anonymously', None):
+            serializer.save(complainer=None, author=author)
+        else:
+            serializer.save(complainer=self.request.user.profile, author=author) 
+
+
 class OrganizationViewSet(mixins.ListModelMixin,
                           viewsets.GenericViewSet):
 
     queryset = Organization.objects.all()
-    serializer_class = serializers.OrganizationSerializer
+    serializer_class = OrganizationSerializer
 
     lookup_field = 'polygon_id'
 
@@ -37,12 +155,12 @@ class OrganizationViewSet(mixins.ListModelMixin,
     @list_route()
     def orgtypes(self, request):
         """
-        return list of organization types
+        return list of organization types with availaible claim types
 
-        for organization creation form
+        for organization and claim creation forms
         """
         org_types = OrganizationType.objects.all()
-        serializer = serializers.OrganizationTypeSerializer(org_types, many=True)
+        serializer = OrganizationTypeSerializer(org_types, many=True)
         return Response(serializer.data)
 
     def list(self, request):
@@ -64,7 +182,7 @@ class OrganizationViewSet(mixins.ListModelMixin,
         Example:  .../organization/21citzhovt0002/
         """
         queryset = Organization.objects.filter(polygon__polygon_id=polygon_id)
-        serializer = serializers.OrganizationSerializer(queryset, many=True)
+        serializer = OrganizationSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def create(self, request):
@@ -186,7 +304,7 @@ class FitBoundsPolygons(viewsets.ViewSet):
         # print('  get polygon and orgs(sql)', time.time() - db_start)
 
         # serializer_start = time.time()
-        serializer = serializers.PolygonSerializer(geodata, many=True)
+        serializer = PolygonSerializer(geodata, many=True)
         data = serializer.data
         # print('  serialization', time.time() - serializer_start)
 

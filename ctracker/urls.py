@@ -19,8 +19,8 @@ class CustomRouter(DefaultRouter):
 
 router = CustomRouter()
 
-# router.register(r'claim', claim.ClaimViewSet,
-#                 base_name='claims')
+router.register(r'claim', views.ClaimViewSet,
+                base_name='claims')
 router.register(r'organization', views.OrganizationViewSet,
                 base_name='organizations')
 # router.register(r'polygon', geoinfo.PolygonViewSet,

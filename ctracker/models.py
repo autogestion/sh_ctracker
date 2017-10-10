@@ -1,14 +1,17 @@
 import json
 from pprint import pprint
+import datetime
 
 from django.db import connection
 from django.contrib.gis.db import models
-from django.db.models import Sum, Count
+from django.db.models import Sum
+from django.db.models import Count
 from django.utils.translation import ugettext as _
 # from django.utils.safestring import mark_safe
 from django.core.cache import cache
 
-import datetime
+from socialhome.content.models import Content
+from socialhome.users.models import Profile
 
 # from django.contrib.auth.models import User
 
@@ -83,9 +86,10 @@ class Organization(models.Model):
     is_verified = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
 
-    # def moderation_filter(self):
-    #     return self.claim_set.filter(
-    #         moderation__in=Moderator.allowed_statuses())
+    def moderation_filter(self):
+        return self.claim_set.filter(
+    #         moderation__in=Moderator.allowed_statuses()
+    )
 
     def first_polygon(self):
         try:
@@ -214,3 +218,18 @@ class Polygon(models.Model):
 
     def __str__(self):
         return 'Polygon ' + str(self.polygon_id)
+
+
+class Claim(Content):
+    organization = models.ForeignKey(Organization)
+    servant = models.CharField(max_length=550)
+    complainer = models.ForeignKey(Profile, null=True, blank=True, default=None)
+    claim_type = models.ForeignKey(ClaimType, null=True, blank=True,
+                                   default=None)    
+    bribe = models.IntegerField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        super(Claim, self).save(*args, **kwargs)
+        key = 'color_for::%s' % self.organization.first_polygon().polygon_id
+        if cache.has_key(key):
+            cache.delete(key)
