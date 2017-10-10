@@ -5,7 +5,7 @@ import Vue2Leaflet from "vue2-leaflet"
 
 import Axios from "axios"
 
-import 'leaflet/dist/leaflet.css'
+// import 'leaflet/dist/leaflet.css'
 
 Vue.component('v-map', Vue2Leaflet.Map);
 Vue.component('v-tilelayer', Vue2Leaflet.TileLayer);

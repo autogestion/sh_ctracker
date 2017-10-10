@@ -21,8 +21,8 @@ router = CustomRouter()
 
 # router.register(r'claim', claim.ClaimViewSet,
 #                 base_name='claims')
-# router.register(r'organization', claim.OrganizationViewSet,
-#                 base_name='organizations')
+router.register(r'organization', views.OrganizationViewSet,
+                base_name='organizations')
 # router.register(r'polygon', geoinfo.PolygonViewSet,
 #                 base_name='polygon')
 # router.register(r'polygon/get_nearest', geoinfo.GetNearestPolygons,

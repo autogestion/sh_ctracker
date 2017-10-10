@@ -4,7 +4,72 @@ from django.forms.models import model_to_dict
 from rest_framework import serializers
 
 from ctracker.sql import get_sum_for_layers, get_max_for_layers
-from ctracker.models import Polygon
+from ctracker.models import Polygon, Organization, OrganizationType
+
+
+class OrganizationTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = OrganizationType
+        fields = ('type_id', 'name', 'claim_types')
+
+
+class SkipEmptyListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        iterable = data.all() if isinstance(data, models.Manager) else data
+        return [
+            self.child.to_representation(item) for item in iterable if item
+        ]
+
+
+class AddressException(Exception):
+    pass
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        dynamic = kwargs.pop('dynamic', False)
+        skip_address = kwargs.pop('skip_address', False)
+        super(OrganizationSerializer, self).__init__(*args, **kwargs)
+        if not dynamic:
+            self.fields.pop('claims', None)
+        if skip_address:
+            self.fields.pop('address', None)
+            self.fields.pop('polygons', None)
+
+    address = serializers.CharField()
+
+    centroid = serializers.CharField(write_only=True)
+    parent_polygon_id = serializers.CharField(write_only=True, required=False)
+    polygon_id = serializers.CharField(write_only=True, required=False)
+    shape = serializers.CharField(write_only=True, required=False)
+    level = serializers.IntegerField(write_only=True, required=False)
+
+    class Meta:
+        model = Organization
+        fields = ('id', 'name', 'org_type',
+                  # from other tables
+                  'address', 'polygons', 'claims',
+                  # write only (for ploygon)
+                  'parent_polygon_id', 'polygon_id',
+                  'shape', 'level', 'centroid'
+                  )
+        extra_kwargs = {'org_type': {'required': True}}
+
+    def to_representation(self, instance):
+        try:
+            return super(OrganizationSerializer,
+                         self).to_representation(instance)
+        except AddressException:
+            pass
+
+    @classmethod
+    def many_init(cls, *args, **kwargs):
+        kwargs['child'] = cls(**kwargs)
+        kwargs.pop('dynamic', None)
+        kwargs.pop('skip_address', None)
+        return SkipEmptyListSerializer(*args, **kwargs)
 
 
 def level_separator(item_obj, parents, ids, poly_objects):
@@ -191,8 +256,7 @@ class PolygonSerializer(serializers.ModelSerializer):
             # start_js = time.time()
             wkt = instance.shape.wkt
             wkt = wkt[10:wkt.find("))")]
-            responce["geometry"] = {'type': 'Polygon',
-                                    'coordinates':
+            responce["geometry"] = {'type': 'Polygon', 'coordinates':
                 [[[float(y) for y in x.strip().strip(')').strip('(').split(' ')] for x in wkt.split(',')]]
             }
             # print('          getting shape wkt', time.time() - start_js)
