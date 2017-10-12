@@ -42,7 +42,7 @@ class PolygonAdmin(admin.OSMGeoAdmin):
 
 class ClaimAdmin(admin.ModelAdmin):
     list_display = ('id', 'organization', 'servant',
-                    # 'claim_type', 'text', 'live',
+                    'claim_type', 'text',
                     'complainer', 'bribe',)
     search_fields = ('organization', 'servant', 'text')
     list_filter = ('organization',)

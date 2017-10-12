@@ -86,6 +86,7 @@ FB - https://www.facebook.com/activecorruptiontracking/
     
         python manage.py migrate
         python manage.py initiate_db
+        python manage.py createsuperuser  # with username 'acts', it will be used for broadcasting claims
 
 
 API docs available on .../api/#/ctracker

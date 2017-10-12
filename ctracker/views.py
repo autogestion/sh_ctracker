@@ -58,6 +58,16 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     lookup_field = 'id'
 
+
+    def get_by_id(self, queryset):
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)        
+
     @detail_route()
     def user(self, request, id=None):
         """
@@ -66,15 +76,8 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         Example:  .../claim/2/user/
         """         
         queryset = self.queryset.filter(complainer__id=id)
-        serializer = self.get_serializer(queryset, many=True)
+        return self.get_by_id(queryset)
 
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
 
     @detail_route()
     def broadcaster(self, request, id=None):
@@ -84,15 +87,7 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         Example:  .../claim/3/broadcaster/        
         """         
         queryset = self.queryset.filter(author__id=id)
-        serializer = self.get_serializer(queryset, many=True)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        return self.get_by_id(queryset)
 
 
     def retrieve(self, request, id=None):

@@ -2,7 +2,9 @@
 from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 
-from ctracker import views
+from ctracker.views import ClaimViewSet
+from ctracker.views import OrganizationViewSet
+from ctracker.views import FitBoundsPolygons
 
 
 class CustomRouter(DefaultRouter):
@@ -19,15 +21,15 @@ class CustomRouter(DefaultRouter):
 
 router = CustomRouter()
 
-router.register(r'claim', views.ClaimViewSet,
+router.register(r'claim', ClaimViewSet,
                 base_name='claims')
-router.register(r'organization', views.OrganizationViewSet,
+router.register(r'organization', OrganizationViewSet,
                 base_name='organizations')
 # router.register(r'polygon', geoinfo.PolygonViewSet,
 #                 base_name='polygon')
 # router.register(r'polygon/get_nearest', geoinfo.GetNearestPolygons,
 #                 base_name='get_nearest')
-router.register(r'polygon/fit_bounds', views.FitBoundsPolygons,
+router.register(r'polygon/fit_bounds', FitBoundsPolygons,
                 base_name='fit_bounds')
 # router.register(r'polygon/check_in', geoinfo.CheckInPolygon,
 #                 base_name='check_in')
