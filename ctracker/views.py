@@ -36,22 +36,6 @@ class MapHomeView(TemplateView):
 
 
 class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
-    """
-
-
-    - to add claim use POST request with next parameters:
-        required - 'text', 'organization', 'servant', 'claim_type'
-        optional - 'live', 'bribe', 'anonymously':'on'
-
-    Example:
-        'text': 'Покусали комарі',
-        'claim_type': '2',
-        'servant': 'Бабця',
-        'live': 'true',
-        'organization': '13',
-        'bribe': '50'
-    .
-    """
 
     queryset = Claim.objects.all().order_by('-created')
     serializer_class = ClaimSerializer
@@ -71,7 +55,7 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     @detail_route()
     def user(self, request, id=None):
         """
-        return claims for given user id
+        return claims for given user id (web)
 
         Example:  .../claim/2/user/
         """         
@@ -82,7 +66,7 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     @detail_route()
     def broadcaster(self, request, id=None):
         """
-        return claims for given broadcaster id
+        return claims for given broadcaster id (web)
 
         Example:  .../claim/3/broadcaster/        
         """         
@@ -92,7 +76,7 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     def retrieve(self, request, id=None):
         """
-        return claims for given organization id
+        return claims for given organization id (web)
 
         Example:  .../claim/13/
         """         
@@ -112,7 +96,7 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     def create(self, request):
         """
-        add claim for given organization id
+        add claim for given organization id (web)
 
         required fields - 'text', 'organization', 'servant', 'claim_type'
 
@@ -150,7 +134,7 @@ class OrganizationViewSet(mixins.ListModelMixin,
     @list_route()
     def orgtypes(self, request):
         """
-        return list of organization types with availaible claim types
+        return list of organization types with availaible claim types (web)
 
         for organization and claim creation forms
         """
@@ -160,7 +144,7 @@ class OrganizationViewSet(mixins.ListModelMixin,
 
     def list(self, request):
         """
-        search organizations by name
+        search organizations by name (web)
 
         Example:  .../organization/?search=прок
         """
@@ -172,7 +156,7 @@ class OrganizationViewSet(mixins.ListModelMixin,
 
     def retrieve(self, request, polygon_id=None):
         """
-        return organizations for polygon
+        return organizations for polygon (web)
 
         Example:  .../organization/21citzhovt0002/
         """
@@ -182,7 +166,7 @@ class OrganizationViewSet(mixins.ListModelMixin,
 
     def create(self, request):
         """
-        add organization with polygon (or marker)
+        add organization with polygon (or marker) (web)
 
         Example parameters with building shape:
 
@@ -260,7 +244,7 @@ class FitBoundsPolygons(viewsets.ViewSet):
 
     def retrieve(self, request, layer, coord):
         """
-        return polygons that fit to bounds (coordinates in W, S, E, N).
+        return polygons that fit to bounds (coordinates in W, S, E, N). (web)
 
         Available layers:
 

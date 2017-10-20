@@ -1,20 +1,17 @@
 import os
-from setuptools import find_packages, setup
+from setuptools import setup
 
-with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
-    README = readme.read()
-
-# allow setup.py to be run from any path
-os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name='sh_ctracker',
+    name='ctracker',
     version='0.1',
-    packages=find_packages(),
+    packages=['ctracker'],
     include_package_data=True,
     license='BSD 3-Clause License',  # example license
     description='A federated Corruption Tracker',
-    long_description=README,
+    long_description=read('README.md'),
     url='',
     author='Mykhailo Kushchenko',
     author_email='',
@@ -33,4 +30,5 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
+    zip_safe = False,
 )

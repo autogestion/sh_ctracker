@@ -1,9 +1,10 @@
 # A federated Corruption Tracker
 
-Corruption tracker module for [Socialhome](https://github.com/jaywink/socialhome)
+Corruption tracker module for [Socialhome](https://github.com/jaywink/socialhome),
 based on stand-alone [Corruption tracker](https://github.com/autogestion/corruption_tracker) engine
 
-Corruption tracker lets you make cases of corruption and professionally unfit of civil servant public and as result track the level of it in public institutions
+Corruption tracker lets people to make cases of corruption and professionally unfit of civil servant public and as result track the level of it in public institutions.
+Centralized server encountered with the problem, that it is hard to get together journalists, politicians and public organizations, they have different standards and requirements. So in federated version actors will aggregate claims on their own pods with their specific marketing strategy and share results using Diaspora protocol
 
 FB - https://www.facebook.com/activecorruptiontracking/
 
@@ -17,11 +18,11 @@ FB - https://www.facebook.com/activecorruptiontracking/
         http://socialhome.readthedocs.io/en/latest/development.html#development
         http://socialhome.readthedocs.io/en/latest/install_guides.html#install-guides
 
-     1.2 Install postgis
+    1.2 Install postgis
 
         sudo apt-get install postgis
 
-     1.3 On db creation, use next flow (or create extension postgis later):
+    1.3 On db creation, use next flow (or create extension postgis later):
 
         sudo su - postgres
         createuser -s -P socialhome  # give password 'socialhome'
@@ -32,7 +33,13 @@ FB - https://www.facebook.com/activecorruptiontracking/
         \q    
         exit
 
-     Clone ctracker and symlink it to socialhome project folder
+    1.4 Install ctracker using pip
+
+        pip install git+https://github.com/autogestion/sh_ctracker.git
+
+        or symlink for development
+
+        ln -s ~/.../sh_ctracker/ctracker/ ~/.../env/lib/python3.5/site-packages/ctracker
 
 2. Update frontend part
 
@@ -46,41 +53,29 @@ FB - https://www.facebook.com/activecorruptiontracking/
 
         map: path.resolve(__dirname, "ctracker/front_vue/map.js"),
 
-3. Update Django part
+3. Update socialhome Django part
 
-    3.1 Update settings in config/settings/common.py:
+    3.1 Add in the end of config/settings/common.py next code:
 
-        -Add "ctracker"  and 'django.contrib.gis' to your INSTALLED_APPS
-        INSTALLED_APPS = [
-            ...
-            'django.contrib.gis',
-            'ctracker',
-            
-        ]
+        INSTALLED_APPS += ('django.contrib.gis', 'ctracker')
 
-        -Add
-        str(ROOT_DIR.path("ctracker").path("templates"))  to
-        TEMPLATES["DIRS"]
+    3.1 Edit .env file to add next values:
 
-        -Add
-        str(ROOT_DIR.path("ctracker").path("static"))  to
-        STATICFILES_DIRS
+        -Update DATABASE_URL to next value
+        DATABASE_URL=postgis://socialhome:socialhome@127.0.0.1:5432/socialhome
 
-        -Add
-        DATABASES["default"]['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
-        after DATABASES definition
+        -Add 
+        ADDITIONAL_APS=django.contrib.gis,ctracker
 
     3.2 Update URLconf in socialhome config/urls.py:
 
         -Add 
         from ctracker.views import MapHomeView
 
-        -Replace url(r"^$", HomeView.as_view(), name="home"), with
+        -Replace url(r"^$", HomeView.as_view(), name="home"), 
+        with
         url(r"^$", MapHomeView.as_view(), name="home"),
-
-        -Add
         url(r'^ctracker/', include('ctracker.urls')),
-        
 
     3.3. Run
     
