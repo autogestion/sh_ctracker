@@ -39,39 +39,8 @@ class OrganizationType(models.Model):
     type_id = models.CharField(primary_key=True, max_length=155)
     name = models.CharField(max_length=255)
 
-    def claim_types(self):
-        claim_types = self.claimtype_set.all()
-        claim_types_list = []
-
-        for claim_type in claim_types:
-            claim_types_list.append({
-                'id': claim_type.id,
-                'name': claim_type.name,
-                'icon': claim_type.icon.url if\
-                claim_type.icon else False
-            })
-        return claim_types_list
-
     def __str__(self):
         return self.type_id
-
-
-class ClaimType(models.Model):
-    """
-    Binding the set of ClaimType objects to OrganizationType
-    allow to show to user dropdown with common violations
-    in organizations of certain type
-
-    """
-    name = models.CharField(max_length=555)
-    org_type = models.ManyToManyField(OrganizationType)
-    icon = models.FileField(upload_to='icons/', null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-    def linked_org_types(self):
-        return ','.join([x.type_id for x in self.org_type.all()])
 
 
 class AddressException(Exception):
@@ -223,9 +192,7 @@ class Polygon(models.Model):
 class Claim(Content):
     organization = models.ForeignKey(Organization)
     servant = models.CharField(max_length=550)
-    complainer = models.ForeignKey(Profile, null=True, blank=True, default=None)
-    claim_type = models.ForeignKey(ClaimType, null=True, blank=True,
-                                   default=None)    
+    complainer = models.ForeignKey(Profile, null=True, blank=True, default=None)  
     bribe = models.IntegerField(blank=True, null=True)
 
     def save(self, *args, **kwargs):

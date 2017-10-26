@@ -5,7 +5,6 @@ from ctracker.models import Uploader
 from ctracker.models import Polygon
 from ctracker.models import Organization
 from ctracker.models import OrganizationType
-from ctracker.models import ClaimType
 from ctracker.models import Claim
 
 
@@ -42,8 +41,7 @@ class PolygonAdmin(admin.OSMGeoAdmin):
 
 class ClaimAdmin(admin.ModelAdmin):
     list_display = ('id', 'organization', 'servant',
-                    'claim_type', 'text',
-                    'complainer', 'bribe',)
+                    'text', 'complainer', 'bribe',)
     search_fields = ('organization', 'servant', 'text')
     list_filter = ('organization',)
 
@@ -52,5 +50,4 @@ admin.site.register(Uploader)
 admin.site.register(Polygon, PolygonAdmin)
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(OrganizationType, OrganizationTypeAdmin)
-admin.site.register(ClaimType, ClaimTypeAdmin)
 admin.site.register(Claim, ClaimAdmin)

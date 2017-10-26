@@ -9,15 +9,7 @@ from ctracker.models import Polygon
 from ctracker.models import Organization
 from ctracker.models import OrganizationType
 from ctracker.models import AddressException
-from ctracker.models import ClaimType
 from ctracker.models import Claim
-
-
-class ClaimTypeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ClaimType
-        fields = '__all__'
 
 
 class ClaimListSerializer(serializers.ListSerializer):
@@ -31,38 +23,31 @@ class ClaimListSerializer(serializers.ListSerializer):
 class ClaimSerializer(serializers.ModelSerializer):
 
     organization_name = serializers.ReadOnlyField(source='organization.name')
-    claim_type_name = serializers.ReadOnlyField(source='claim_type.name')
     created = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",
                                         read_only=True)
 
     complainer_name = serializers.SerializerMethodField()
     broadcaster = serializers.ReadOnlyField(source='author.id')
     broadcaster_name = serializers.ReadOnlyField(source='author.handle')
-    claim_icon = serializers.SerializerMethodField()
 
     def get_complainer_name(self, instance):
         if instance.complainer:
             return instance.complainer.name_or_handle
 
-    def get_claim_icon(self, instance):
-        if instance.claim_type and instance.claim_type.icon:
-            return instance.claim_type.icon.url
-
     class Meta:
         model = Claim
-        fields = ('servant', 'claim_type_name', 'bribe',
-                  'text', 'created', 'claim_icon',
+        fields = ('servant', 'bribe',
+                  'text', 'created', 
                   # write only
-                  'organization', 'claim_type',
+                  'organization', 
                   # changing
                   'organization_name', 
                   'broadcaster', 'broadcaster_name',
                   'complainer', 'complainer_name',)
 
-        extra_kwargs = {'claim_type': {'required': True, 'write_only': True},
+        extra_kwargs = {
                         'organization': {'write_only': True},
                         'complainer': {'read_only': True},
-                        'claim_icon': {'read_only': True}, 
                         }
 
     def to_representation(self, instance):
@@ -93,7 +78,7 @@ class OrganizationTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrganizationType
-        fields = ('type_id', 'name', 'claim_types')
+        fields = ('type_id', 'name')
 
 
 class SkipEmptyListSerializer(serializers.ListSerializer):

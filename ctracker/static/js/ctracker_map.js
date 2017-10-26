@@ -1,23 +1,8 @@
 
-function update_dropdown (org_type_id){
-    // console.log(org_type_id)
-    var $dropdown = $("#claim_type");
-    $dropdown.empty();
-
-    if (claim_types[org_type_id]){
-        // console.log(claim_types[org_type_id])
-    $.each(claim_types[org_type_id], function(key, value) {
-      $dropdown.append($("<option></option>")
-         .attr("value", value.id).text(value.value));
-    });    
-    }
-}
-
 function fill_claim_form(org_id){
     $('#organization').val(org_id);
     for (var i = places.length - 1; i >= 0; i--) {
         if (places[i].data === parseInt(org_id)){
-            update_dropdown(places[i].org_type_id)
             $('#organization_name').val(places[i].value);
             $('#organization_name_div').text(places[i].value);
             break
@@ -26,8 +11,6 @@ function fill_claim_form(org_id){
 }    
 
 function clear_claim_form(){
-    var $dropdown = $("#claim_type");
-    $dropdown.empty();
     $('#organization').val(null);
     $('#organization_name').val(null);    
 }
@@ -40,7 +23,6 @@ function process_claim_template(template, data) {
 
     message = message.replace('%broadcaster%', data['broadcaster_name']);
     message = message.replace('%servant%', data['servant']);
-    message = message.replace('%claim_type%', data['claim_type_name']);
     message = message.replace('%text%', data['text']);
     message = message.replace('%created%', data['created']);
 
