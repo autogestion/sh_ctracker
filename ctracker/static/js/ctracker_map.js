@@ -38,6 +38,7 @@ function process_claim_template(template, data) {
     if (data['bribe']) { message = template.replace('%bribe%', data['bribe']);}
     else { message = template.replace('%bribe%', '0');};
 
+    message = message.replace('%broadcaster%', data['broadcaster_name']);
     message = message.replace('%servant%', data['servant']);
     message = message.replace('%claim_type%', data['claim_type_name']);
     message = message.replace('%text%', data['text']);
@@ -62,10 +63,9 @@ function select_building (org_id, org_name, coordinates) {
             url: api_url + 'claim/' + org_id + "/",
             success: function(data){
                 var messages = "";
-                var template, message, template_button;
+                var template, message
 
                 template = document.getElementById('claim_template_for_org').innerHTML;
-                template_button = document.getElementById('show_all_button_template').innerHTML;
 
                 var record;
                 var count = 0;
@@ -89,12 +89,10 @@ function select_building (org_id, org_name, coordinates) {
                     } 
                 }
 
-                // template_button = template_button.replace('%org_id%', org_id);
                 if (messages == "") {
-                    messages = gettext('No claims for this organization');
-                    template_button= '';} 
+                    messages = gettext('No claims for this organization');} 
 
-                $("#claimsModal .modal-body").html(messages+template_button);
+                $("#claimsModal .modal-body").html(messages);
                 $("#claimsModal .modal-title").html(org_name);          
 
                 $("#claimsModal").modal("show");

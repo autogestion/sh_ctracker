@@ -1,4 +1,4 @@
-{% extends "map_base.html" %}
+{% extends "ctracker_base.html" %}
 {% load i18n %}
 
 {% block title %}
@@ -8,11 +8,11 @@
 {% block containertype %}container-fluid{% endblock %}
 
 {% block ogtags %}
-    <meta property="og:title" content="{% trans "Public" %} - {{ request.site.name }}" />
+    <meta property="og:title" content="{% trans "Map" %} - {{ request.site.name }}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://{{ request.site.domain }}{{ request.path }}" />
     {# TODO fix logo #}
-    <meta property="og:image" content="https://socialhome.network/media/markdownx/74b37fa1-88d0-4e29-9fdc-8d07ba216f63.png" />
+    <meta property="og:image" content="https://socialhome.network/media/markdownx/74b37fa1-88d0-4e29-9fdc-8d07ba216f63.png" />    
 {% endblock %}
 
 {% block content %}
@@ -56,5 +56,11 @@
         
     })();        
     </script>
+
+    <!-- Claim templates and modals -->
+
+    {% include "modals/claims_modal.html" %}
+    {% include "modals/add_objects_modal.html" %}
+    {% include "modals/services_modal.html" %}
 
 {% endblock content %}

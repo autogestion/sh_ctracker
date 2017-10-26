@@ -42,10 +42,7 @@ class ClaimSerializer(serializers.ModelSerializer):
 
     def get_complainer_name(self, instance):
         if instance.complainer:
-            if instance.complainer.get_full_name():
-                return instance.complainer.get_full_name()
-            else:
-                return instance.complainer.username
+            return instance.complainer.name_or_handle
 
     def get_claim_icon(self, instance):
         if instance.claim_type and instance.claim_type.icon:

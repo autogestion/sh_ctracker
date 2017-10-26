@@ -25,7 +25,7 @@ from ctracker.serializers import ClaimSerializer
 
 
 class MapPublicStreamView(PublicStreamView):
-    template_name = "map_public.html"
+    template_name = "ctracker_map.html"
 
 
 class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

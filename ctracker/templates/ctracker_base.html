@@ -42,6 +42,11 @@
             <a class="navbar-brand" href="/">{{ request.site.name }}</a>
             <div class="collapse navbar-collapse mx-auto" id="top-navbar">
                 <ul class="navbar-nav mx-auto w-100 justify-content-end text-center">
+                    <li>
+                        <a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn">
+                            <i class="fa fa-question-circle white"></i>&nbsp;{% trans "Who is here?" %}</a>
+                    </li>
+                
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" id="navbar-streams" href="#">{% trans "Streams" %}</a>
                         <div class="dropdown-menu" aria-labelledby="navbar-streams">

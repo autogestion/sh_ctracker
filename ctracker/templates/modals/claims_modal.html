@@ -3,6 +3,7 @@
   <div id="claim_template_for_org" class="popup_template">
       <div class='claim_icon'></div>
       <div class="claim_tempalte">
+          <div class="broadcaster"><b>{% trans "Broadcaster" %}:</b> %broadcaster% </div>
           <div class="complainer"><b>{% trans "Complainer" %}:</b> %complainer% </div>
           <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
           <div class="claim_type"><b>{% trans "Claim type" %}:</b> <span>%claim_type%</span></div>
@@ -25,11 +26,6 @@
           <hr>
       </div>
   </div>
-
-  <div id="show_all_button_template" class="popup_template">       
-      <button class="btn" onclick="w2ui_popup()">{% trans "Show all claims as table" %}</button>
-  </div>
-
 
   <div class="modal fade" id="claimsModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
