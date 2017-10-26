@@ -1,48 +1,3 @@
-//  start of w2ui config
-var layout = {
-        name: 'layout',
-        padding: 0,
-        panels: [
-            { type: 'main', minSize: 400, resizable: true, }
-        ]
-    };
-
-var grid = { 
-        name: 'grid',
-        show: {          
-            toolbar : true,
-            footer : true,
-            lineNumbers : true
-        },
-        columns: [
-            { field: 'complainer', caption: 'complainer', size: '15%', sortable: true, searchable: true },
-            { field: 'servant', caption: 'servant', size: '15%', sortable: true, searchable: true },
-            { field: 'claim_type', caption: 'claim_type', size: '20%', sortable: true, searchable: true},
-            { field: 'text', caption: 'text', size: '35%', searchable: true},
-            { field: 'bribe', caption: 'bribe', size: '15%', sortable: true},
-            { field: 'created', caption: 'created', size: '15%', sortable: true},
-        ],};
-
-$(function () { 
-    $().w2layout(layout);
-    $().w2grid(grid);
-});
-// end of w2ui config
-
-function w2ui_popup() {
-    w2popup.open({
-        title: 'Claims',
-        body: '<div id="main_w2ui" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; width: 100%;"></div>',
-        width : 1000,
-        onOpen  : function (event) {
-            event.onComplete = function () {
-                $('#w2ui-popup #main_w2ui').w2render('layout');
-                w2ui.layout.content('main', w2ui.grid);
-            }
-        },
-    });
-}
-
 
 function update_dropdown (org_type_id){
     // console.log(org_type_id)
@@ -112,7 +67,6 @@ function select_building (org_id, org_name, coordinates) {
                 template = document.getElementById('claim_template_for_org').innerHTML;
                 template_button = document.getElementById('show_all_button_template').innerHTML;
 
-                var records = [];
                 var record;
                 var count = 0;
                 console.log(data);
@@ -133,12 +87,7 @@ function select_building (org_id, org_name, coordinates) {
                         messages += message;
                         count += 1
                     } 
-                    record = {recid: i+1, complainer: data[i]['complainer_name'], servant: data[i]['servant'], claim_type: data[i]['claim_type'],
-                                text: data[i]['text'], bribe: data[i]['bribe'], created: data[i]['created']};
-                    records.push(record);
                 }
-
-                w2ui.grid.records = records;
 
                 // template_button = template_button.replace('%org_id%', org_id);
                 if (messages == "") {
@@ -290,6 +239,32 @@ $(document).ready(function () {
     $("#org_form").submit(function(event){
         add_organization(event)
     });
+
+    var csrftoken = $.cookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $("#about-btn").click(function() {
+      $("#aboutModal").modal("show");
+      $(".navbar-collapse.in").collapse("hide");
+      return false;
+    });  
+
+
+    $("#addorg-btn").click(function() {
+      $("#addorgModal").modal("show");
+      $(".navbar-collapse.in").collapse("hide");
+      return false;
+    });        
 
 });
 

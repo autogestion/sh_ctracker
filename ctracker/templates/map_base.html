@@ -26,9 +26,9 @@
         <link href="{% static "css/project.css" %}" rel="stylesheet">
     {% endblock %}
 
-    <!-- <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet"> -->
-    <!-- <link href="{% static "css/base.css" %}" rel="stylesheet"> -->
-    <!-- <link href="{% static "css/map.css" %}" rel="stylesheet"> -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static "css/base.css" %}" rel="stylesheet">
+    <link href="{% static "css/map.css" %}" rel="stylesheet">
     <!-- <script src="{% static "js/jquery-1.11.3.min.js" %}"></script> -->
 
 
@@ -112,37 +112,25 @@
         <script type="text/javascript" src="{% url "javascript-catalog" %}"></script>
         <!-- Compiled project JS -->
         <script src="{% static "js/project.js" %}"></script>
-        <script src="{% static "js/webpack.map.js" %}"></script>
-
-        <!-- <script src="{% static "js/jquery.cookie.js" %}"></script> -->
-        <!-- <script src="{% static "js/bootstrap.min.js" %}"></script> -->
-        <!-- <script src="{% static "js/ctracker_main.js" %}"></script> -->
+        <script src="{% static "js/jquery.cookie.js" %}"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
          
-        <!-- <script src="{% static "js/jquery.autocomplete.min.js" %}"></script> -->
+        <script src="{% static "js/jquery.autocomplete.min.js" %}"></script>
 
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script> -->
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css"></script> -->
-        <!-- <script src="{% static "js/leaflet.extras.js" %}"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css"></script>
+        <script src="{% static "js/leaflet.extras.js" %}"></script>
         
 
-<!--         <script type="text/javascript">        
-            var api_url = ""
+        <script type="text/javascript">        
+            var api_url = "ctracker/"
             var claim_types = "{{claim_types}}"
             var zoom_to = [49.989457, 36.252512]
             // "{{ zoom_to }}"
             var places= []
-        </script> -->
-        <!-- <script src="{% static "js/ctracker_map_init.js" %}"></script> -->
-        <!-- <script src="{% static "js/ctracker_map.js" %}"></script> -->
-        
-        <script type="text/javascript">  
-        // var map = L.map('map').setView(zoom_to, 13);
-
-        // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-        //     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        // }).addTo(map);
-        </script> 
-
+        </script>
+        <script src="{% static "js/ctracker_map_init.js" %}"></script>
+        <script src="{% static "js/ctracker_map.js" %}"></script>        
 
     {% endblock javascript %}
 </body>
