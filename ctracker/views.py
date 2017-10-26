@@ -28,13 +28,6 @@ class MapPublicStreamView(PublicStreamView):
     template_name = "map_public.html"
 
 
-class MapHomeView(TemplateView):
-    template_name = "map_base.html"
-
-    def get(self, request, *args, **kwargs):
-        return MapPublicStreamView.as_view()(request)
-
-
 class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     queryset = Claim.objects.all().order_by('-created')

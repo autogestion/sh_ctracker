@@ -18,6 +18,9 @@ FB - https://www.facebook.com/activecorruptiontracking/
         http://socialhome.readthedocs.io/en/latest/development.html#development
         http://socialhome.readthedocs.io/en/latest/install_guides.html#install-guides
 
+        or by using this short one (could be not actual, if not, use official guides)
+        [sh_quick_start.txt](https://github.com/autogestion/sh_ctracker/blob/master/sh_quick_start.txt)
+
     1.2 Install postgis
 
         sudo apt-get install postgis
@@ -41,43 +44,18 @@ FB - https://www.facebook.com/activecorruptiontracking/
 
         ln -s ~/.../sh_ctracker/ctracker/ ~/.../env/lib/python3.5/site-packages/ctracker
 
-2. Update frontend part
+2. Configure project
+    2.1 Edit .env file to add next values:
 
-    2.1 Install Vue2Leaflet
-
-        npm install vue2-leaflet --save
-
-    2.1 Update webpack config
-
-        -Add to module.exports
-
-        map: path.resolve(__dirname, "ctracker/front_vue/map.js"),
-
-3. Update socialhome Django part
-
-    3.1 Add in the end of config/settings/common.py next code:
-
-        INSTALLED_APPS += ('django.contrib.gis', 'ctracker')
-
-    3.1 Edit .env file to add next values:
-
-        -Update DATABASE_URL to next value
+        -Update DATABASE_URL to next value (replace postgres with postgis):
         DATABASE_URL=postgis://socialhome:socialhome@127.0.0.1:5432/socialhome
 
         -Add 
-        ADDITIONAL_APS=django.contrib.gis,ctracker
+        SOCIALHOME_HOME_VIEW=ctracker.views.MapPublicStreamView
+        SOCIALHOME_ADDITIONAL_APPS=django.contrib.gis,ctracker
+        SOCIALHOME_ADDITIONAL_APPS_URLS=ctracker/,ctracker.urls
 
-    3.2 Update URLconf in socialhome config/urls.py:
-
-        -Add 
-        from ctracker.views import MapHomeView
-
-        -Replace url(r"^$", HomeView.as_view(), name="home"), 
-        with
-        url(r"^$", MapHomeView.as_view(), name="home"),
-        url(r'^ctracker/', include('ctracker.urls')),
-
-    3.3. Run
+    2.2 Run
     
         python manage.py migrate
         python manage.py initiate_db
@@ -85,3 +63,12 @@ FB - https://www.facebook.com/activecorruptiontracking/
 
 
 API docs available on .../api/#/ctracker
+
+## Submit a bug
+
+We would like to hear about any bugs or odd behavior that you uncover. Use the [issue tracker](../../issues/) to open a new item. When describing the issue, we recommend that you discuss the following items:
+
+  * Describe the bug
+  * Describe the steps you did to discover the bug
+  * What was the expected outcome of the above steps?
+  * Please provide screenshots, if applicable     
