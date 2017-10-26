@@ -218,13 +218,11 @@ class OrgsForPolySerializer(serializers.ListSerializer):
             # print('    getting org ids', time.time() - start)
 
             # start = time.time()
-            # claims_for_orgs = get_sum_for_layers(org_ids, 4)
-            claims_for_orgs = {}
+            claims_for_orgs = get_sum_for_layers(org_ids, 4)
             # print('    agregating claims(sql)', time.time() - start)
 
             # start = time.time()
-            # buildings_max_claims_dict = get_max_for_layers(buildings_parents, 4)
-            buildings_max_claims_dict = {}
+            buildings_max_claims_dict = get_max_for_layers(buildings_parents, 4)
             # print('    agregating max claims(sql)', time.time() - start)
 
             for polygon in buildings_objects:

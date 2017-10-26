@@ -18,9 +18,6 @@ FB - https://www.facebook.com/activecorruptiontracking/
         http://socialhome.readthedocs.io/en/latest/development.html#development
         http://socialhome.readthedocs.io/en/latest/install_guides.html#install-guides
 
-        or by using this short one (could be not actual, if not, use official guides)
-        [sh_quick_start.txt](https://github.com/autogestion/sh_ctracker/blob/master/sh_quick_start.txt)
-
     1.2 Install postgis
 
         sudo apt-get install postgis
@@ -45,6 +42,7 @@ FB - https://www.facebook.com/activecorruptiontracking/
         ln -s ~/.../sh_ctracker/ctracker/ ~/.../env/lib/python3.5/site-packages/ctracker
 
 2. Configure project
+
     2.1 Edit .env file to add next values:
 
         -Update DATABASE_URL to next value (replace postgres with postgis):
