@@ -27,6 +27,11 @@ from ctracker.serializers import ClaimSerializer
 class MapPublicStreamView(PublicStreamView):
     template_name = "ctracker_map.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['org_types'] = OrganizationType.objects.all()
+        return context
+
 
 class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
@@ -170,7 +175,7 @@ class OrganizationViewSet(mixins.ListModelMixin,
         "org_type": "prosecutors",
         "layer_id": "21citzhovt",
         "address": "Shevshenko street, 3",
-        "org_name": "Ministry of defence",
+        "name": "Ministry of defence",
         "centroid": "36.2968099,50.0060348",
         "polygon_id": "mindef"}
 
@@ -179,7 +184,7 @@ class OrganizationViewSet(mixins.ListModelMixin,
         {"org_type": "prosecutors",
         "layer_id": "21citzhovt",
         "address": "Shevshenko street, 3",
-        "org_name": "Ministry of defence",
+        "name": "Ministry of defence",
         "centroid": "36.2968099,50.0060348",
         "polygon_id": "mindef"}
 
@@ -220,7 +225,7 @@ class OrganizationViewSet(mixins.ListModelMixin,
             type_id=request.data['org_type'])
 
         organization = Organization(
-            name=request.data['org_name'],
+            name=request.data['name'],
             org_type=org_type,
             is_verified=False)
         organization.save()

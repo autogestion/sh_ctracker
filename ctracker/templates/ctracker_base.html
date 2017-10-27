@@ -42,8 +42,8 @@
             <a class="navbar-brand" href="/">{{ request.site.name }}</a>
             <div class="collapse navbar-collapse mx-auto" id="top-navbar">
                 <ul class="navbar-nav mx-auto w-100 justify-content-end text-center">
-                    <li>
-                        <a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn">
                             <i class="fa fa-question-circle white"></i>&nbsp;{% trans "Who is here?" %}</a>
                     </li>
                 
@@ -55,6 +55,7 @@
                                 <a class="dropdown-item" href="{% url "users:all-content" username=request.user.username %}">{% trans "My content" %}</a>
                             {% endif %}
                             <a class="dropdown-item" href="{% url "streams:public" %}">{% trans "Public" %}</a>
+                            <a class="dropdown-item" href="/">{% trans "Map" %}</a>
                         </div>
                     </li>
                     {% if request.user.is_authenticated %}
@@ -88,6 +89,15 @@
                             </span>
                         </div>
                     </form>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" id="toolsDrop" href="#">{% trans "Tools" %}</a>
+
+                        <div class="dropdown-menu" aria-labelledby="navbar-streams">
+                            <a class="dropdown-item" href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="addorg-btn">{% trans "Add organization" %}</a>
+                            <a class="dropdown-item" href="api/#!/ctracker/" target="_blank">{% trans "API Docs" %}</a>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>

@@ -4,13 +4,12 @@ from django.core.files import File
 from django.conf import settings
 from django.contrib.gis.geos import fromstr
 
-from ctracker.models import Polygon, OrganizationType, Organization, ClaimType
+from ctracker.models import Polygon, OrganizationType, Organization
 
 class GeoJSONParser():
 
     @staticmethod
     def get_geojson_file(file_path):
-        # print(file_path)
         try:
             # python 3+
             json_s = open(file_path, encoding='utf8').read()
@@ -24,19 +23,6 @@ class GeoJSONParser():
     @staticmethod
     def geojson_to_db(geo_json, return_instance=False):
         centroidPattern = re.compile("(-?\d+(?:\.\d+)?)\D+(-?\d+(?:\.\d+)?)")
-
-        if geo_json['ctracker_config']['AL'] == 4:
-            try:
-                default_claim_type = ClaimType.objects.get(name='---')
-            except ClaimType.DoesNotExist:
-                default_claim_type = ClaimType(name='---')
-                default_claim_type.save()
-
-            try:
-                xabar = ClaimType.objects.get(name='Xabar')
-            except ClaimType.DoesNotExist:
-                xabar = ClaimType(name='Xabar')
-                xabar.save()
 
         # Create polygons
         for feature in geo_json['features']:
@@ -69,8 +55,7 @@ class GeoJSONParser():
                 org_types = feature['properties']['ORG_TYPES'].split('|')
                 for index, org_name in enumerate(org_names):
                     try:
-                        org_obj = Organization.objects.get(
-                            name=org_name)
+                        org_obj = Organization.objects.get(name=org_name)
                     except Organization.DoesNotExist:
 
                         try:
