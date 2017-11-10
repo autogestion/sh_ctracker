@@ -39,7 +39,7 @@ FB - https://www.facebook.com/activecorruptiontracking/
 
         or symlink for development
 
-        ln -s ~/.../sh_ctracker/ctracker/ ~/.../env/lib/python3.5/site-packages/ctracker
+        ln -s /home/.../sh_ctracker/ctracker/ /home/.../env/lib/python3.5/site-packages/ctracker
 
 2. Configure project
 
@@ -61,6 +61,7 @@ FB - https://www.facebook.com/activecorruptiontracking/
 
 
 API docs available on .../api/#/ctracker
+
 
 ## Submit a bug
 

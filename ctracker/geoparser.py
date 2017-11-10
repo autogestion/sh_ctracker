@@ -66,8 +66,6 @@ class GeoJSONParser():
                                 type_id=org_types[index],
                                 name=geo_json['ctracker_config']["ORG_TYPES"][org_types[index]])
                             org_type.save()
-                            org_type.claimtype_set.add(
-                                default_claim_type, xabar)
 
                         org_obj = Organization(
                             name=org_name,
