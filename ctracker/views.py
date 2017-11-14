@@ -1,5 +1,4 @@
 
-from django.views.generic import TemplateView
 from django.contrib.gis import geos
 from django.db.models import Q
 from django.db.models import Count

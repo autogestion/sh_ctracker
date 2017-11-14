@@ -1,10 +1,10 @@
 import json
-import os, re
-from django.core.files import File
-from django.conf import settings
+import re
+
 from django.contrib.gis.geos import fromstr
 
 from ctracker.models import Polygon, OrganizationType, Organization
+
 
 class GeoJSONParser():
 
