@@ -4,6 +4,7 @@ import datetime
 
 from django.db import connection
 from django.contrib.gis.db import models
+from django.db.models import signals
 from django.db.models import Sum
 from django.db.models import Count
 from django.utils.translation import ugettext as _
@@ -96,8 +97,8 @@ class Organization(models.Model):
         cursor = connection.cursor()
         cursor.execute("""
             SELECT COUNT(*) AS __count FROM claim_claim WHERE 
-                (claim_claim.organization_id = %d AND %s );                   
-            """ % (self.id, moderation_filter))
+                claim_claim.organization_id = %d ;                   
+            """ % self.id)
 
         return cursor.fetchone()[0]
   
@@ -200,3 +201,13 @@ class Claim(Content):
         key = 'color_for::%s' % self.organization.first_polygon().polygon_id
         if cache.has_key(key):
             cache.delete(key)
+
+    def save_base(self, raw=False, force_insert=False,
+                  force_update=False, using=None, update_fields=None):
+        super(Claim, self).save_base(raw, force_insert, force_update,
+                                     using, update_fields)
+
+        # Signal that the save is complete
+        if not self.__class__._meta.auto_created:
+            signals.post_save.send(sender=Content, instance=self, created=True,
+                                   update_fields=update_fields, raw=raw, using=using)

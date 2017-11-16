@@ -139,8 +139,7 @@ def level_separator(item_obj, parents, ids, poly_objects):
     ids.append(item_obj["properties"]['ID'])
     poly_objects.append(item_obj)
     if 'parent_id' in item_obj["properties"]:
-        if item_obj["properties"]['parent_id'] not in parents:
-            parents.append(item_obj["properties"]['parent_id'])
+        parents.add(item_obj["properties"]['parent_id'])
 
 
 def level_appender(polygon, claims_dict, max_claims_dict):
@@ -164,9 +163,9 @@ class OrgsForPolySerializer(serializers.ListSerializer):
         iterable = data.all() if isinstance(data, models.Manager) else data
 
         polygons = []
-        buildings_parents, buildings_ids, buildings_objects = [], [], []
-        district_parents, district_ids, district_objects = [], [], []
-        area_parents, area_ids, area_objects = [], [], []
+        buildings_parents, buildings_ids, buildings_objects = set(), [], []
+        district_parents, district_ids, district_objects = set(), [], []
+        area_parents, area_ids, area_objects = set(), [], []
         region_ids, region_objects = [], []
 
         # start = time.time()

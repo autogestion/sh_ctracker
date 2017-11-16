@@ -69,10 +69,12 @@ Could be outdated due to updates in SocialHome
 
 6 Optional
 
-    To verify user's emails
+    -To verify user's emails
 
         python manage.py shell_plus
 
             EmailAddress.objects.all().update(verified=True)
 
+    -To populate database with random claims
 
+        python manage.py populate_claims
