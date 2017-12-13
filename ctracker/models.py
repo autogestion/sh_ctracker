@@ -1,23 +1,17 @@
 import json
-from pprint import pprint
-import datetime
 
 from django.db import connection
 from django.contrib.gis.db import models
 from django.db.models import signals
-from django.db.models import Sum
-from django.db.models import Count
 from django.utils.translation import ugettext as _
-# from django.utils.safestring import mark_safe
 from django.core.cache import cache
 
 from socialhome.content.models import Content
 from socialhome.users.models import Profile
 
-# from django.contrib.auth.models import User
+from ctracker.sql import get_claims_for_poly
+from ctracker.sql import get_sum_for_layers
 
-# from claim.sql import moderation_filter
-# from claim.sql import get_claims_for_poly, get_sum_for_layers
 
 class Uploader(models.Model):
 
@@ -25,7 +19,7 @@ class Uploader(models.Model):
 
     def save(self, *args, **kwargs):
         if self.json_file:
-            from utils.geoparser import GeoJSONParser
+            from ctracker.geoparser import GeoJSONParser
             geojson = json.loads(self.json_file.read().decode('utf8'))
             GeoJSONParser.geojson_to_db(geojson)
 
@@ -56,11 +50,6 @@ class Organization(models.Model):
     is_verified = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
 
-    def moderation_filter(self):
-        return self.claim_set.filter(
-    #         moderation__in=Moderator.allowed_statuses()
-    )
-
     def first_polygon(self):
         try:
             return self.polygon_set.all()[0]
@@ -68,7 +57,6 @@ class Organization(models.Model):
             return None
 
     def polygons(self):
-        polygons = None
         cached = cache.get('polygons_for::%s' % self.id)
         if cached is not None:
             polygons = cached
@@ -93,7 +81,6 @@ class Organization(models.Model):
 
     @property
     def claims(self):
-        # return self.moderation_filter().count()
         cursor = connection.cursor()
         cursor.execute("""
             SELECT COUNT(*) AS __count FROM claim_claim WHERE 
@@ -134,7 +121,6 @@ class Polygon(models.Model):
         (building, _("Houses"))
     )
     level = models.IntegerField(choices=LEVEL, default=building)
-    
     is_verified = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -143,10 +129,7 @@ class Polygon(models.Model):
     # moderation_filter
     @property
     def total_claims(self):
-        claims = 0
         if self.level == self.building:
-            # claims += sum([x.claims for x in self.organizations.all()])
-            # claims =  self.organizations.filter(claim__moderation__in=Moderator.allowed_statuses()).count()
             claims = get_claims_for_poly(self.polygon_id)
         else:
             # cached = cache.get('claims_for::%s' % self.polygon_id)
@@ -154,9 +137,6 @@ class Polygon(models.Model):
             if cached is not None:
                 claims = cached
             else:
-                # childs = self.polygon_set.all()
-                # for child in childs:
-                    # claims += child.total_claims
                 try:
                     claims = get_sum_for_layers([self.polygon_id], self.level)[self.polygon_id]
                 except KeyError:
@@ -167,24 +147,16 @@ class Polygon(models.Model):
 
     @staticmethod
     def color_spot(value, max_value):
-        if max_value:
-            percent = value * 100 / max_value
-        else:
-            percent = 0
+        if max_value: percent = value * 100 / max_value
+        else: percent = 0
 
-        if percent <= 20:
-            return 'green'
-        elif percent <= 70:
-            return 'yellow'
-        else:
-            return 'red'
+        if percent <= 20: return 'green'
+        elif percent <= 70: return 'yellow'
+        else: return 'red'
 
     def first_organization(self):
         orgs = self.organizations.all()
-        if orgs:
-            return orgs[0]
-        else:
-            return None
+        if orgs: return orgs[0]
 
     def __str__(self):
         return 'Polygon ' + str(self.polygon_id)

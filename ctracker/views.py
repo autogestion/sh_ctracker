@@ -79,8 +79,8 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         """         
         # queryset = self.queryset.filter(organization__id=id)
         organization = Organization.objects.get(id=id)
-        queryset = organization.moderation_filter(
-            ).select_related().annotate(num_c=Count(
+        queryset = organization.claim_set.select_related(
+            ).annotate(num_c=Count(
                 'complainer__claim')).order_by('created')
 
         page = self.paginate_queryset(queryset)

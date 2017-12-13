@@ -30,8 +30,7 @@ class PolygonAdmin(admin.OSMGeoAdmin):
 
     list_display = ('polygon_id', 'layer',
                     'first_organization', 'address',
-                    # 'total_claims',
-                    # 'claims',
+                    'total_claims',
                     'centroid', 'level',
                     'is_verified',
                     'updated')
