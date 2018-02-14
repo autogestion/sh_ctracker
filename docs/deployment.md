@@ -57,7 +57,15 @@ Could be outdated due to updates in SocialHome
         SOCIALHOME_ADDITIONAL_APPS=django.contrib.gis,ctracker
         SOCIALHOME_ADDITIONAL_APPS_URLS=ctracker/,ctracker.urls
 
-5 Run
+5 Compile socialhome front
+
+    npm install    
+    sudo npm -g install grunt
+    sudo npm install -g bower
+    bower install
+    npm run dev
+
+6 Run
 
     python manage.py migrate
     python manage.py initiate_db
@@ -67,7 +75,7 @@ Could be outdated due to updates in SocialHome
 
     You can browse to http://localhost:8000 to see the Django instance running
 
-6 Optional
+7 Optional
 
     -To verify user's emails
 

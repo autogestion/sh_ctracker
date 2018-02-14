@@ -24,13 +24,15 @@ from ctracker.serializers import ClaimSerializer
 
 
 class MapPublicStreamView(PublicStreamView):
-    template_name = "ctracker_map.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['org_types'] = OrganizationType.objects.all()
         return context
 
+    def get_template_names(self):
+        # noinspection PyUnresolvedReferences
+        return ["ctracker_vue.html"]
 
 class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
